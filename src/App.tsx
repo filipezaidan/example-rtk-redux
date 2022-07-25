@@ -1,33 +1,54 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import './App.css'
+import { Flex, Text, Spinner, Stack } from '@chakra-ui/react'
+import { useToast } from '@chakra-ui/react'
+import { useGetUsersQuery } from './services/UserApi'
 
-function App() {
-  const [count, setCount] = useState(0)
+const App = () => {
+  const toast = useToast()
+  const { data, error, isLoading } = useGetUsersQuery()
 
   return (
-    <div className="App">
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src="/vite.svg" className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://reactjs.org" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </div>
+    <Stack w="100vw" h="100vh" py={6}>
+      <Stack
+        direction="column"
+        alignItems="center"
+        h="100%"
+        spacing={10}
+        w="100%"
+      >
+        <Text fontWeight={500} fontSize="3xl">
+          Example RTK Redux
+        </Text>
+        {isLoading && <Spinner size="lg" />}
+        {error &&
+          toast({
+            title: 'Error',
+            description: 'API failed',
+            status: 'error',
+            duration: 9000,
+            isClosable: true,
+            position: 'top-right',
+          })}
+        {data && (
+          <Flex
+            w="80%"
+            h={5}
+            borderRadius={4}
+            minH={600}
+            flexDirection="column"
+            bgColor="#f0f0f0"
+            p={4}
+          >
+            {data.map((user, key) => (
+              <Flex w="100%" h={20}>
+                <Text fontSize="lg" fontWeight={500} key={key}>
+                  {user.name}
+                </Text>
+              </Flex>
+            ))}
+          </Flex>
+        )}
+      </Stack>
+    </Stack>
   )
 }
 
